@@ -349,25 +349,15 @@ end
 local GUI, Elements = CreateModernGUI()
 local GUIEnabled = true
 
--- Make GUI Draggable
+-- Make GUI Draggable (entire MainFrame, not just TitleBar)
 local function MakeDraggable(Frame)
-    local UserInputService = game:GetService("UserInputService")
-    local dragging
-    local dragInput
-    local dragStart
-    local startPos
-    
-    local function update(input)
-        local delta = input.Position - dragStart
-        Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-    
+    local dragging = false
+    local dragInput, dragStart, startPos
     Frame.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             dragging = true
             dragStart = input.Position
             startPos = Frame.Position
-            
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
                     dragging = false
@@ -375,20 +365,18 @@ local function MakeDraggable(Frame)
             end)
         end
     end)
-    
     Frame.InputChanged:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement then
             dragInput = input
         end
     end)
-    
     UserInputService.InputChanged:Connect(function(input)
         if input == dragInput and dragging then
-            update(input)
+            local delta = input.Position - dragStart
+            Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
         end
     end)
 end
-
 MakeDraggable(Elements.MainFrame)
 
 -- Toggle Functions
@@ -514,14 +502,14 @@ Elements.LoadButton.MouseButton1Click:Connect(function()
     Elements.StatusLabel.Text = "Status: Spreman"
 end)
 
--- Hotkey Support
+-- Hotkey Support (RightShift toggles panel visibility)
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if not gameProcessed and input.KeyCode == Config.Hotkey then
         Elements.MainFrame.Visible = not Elements.MainFrame.Visible
     end
 end)
 
--- Fix ZIndex for all buttons and frames to ensure they are clickable
+-- Set high ZIndex for all GUI elements to ensure clickability
 local function SetZIndexRecursive(gui, z)
     if gui:IsA("GuiObject") then
         gui.ZIndex = z
@@ -530,7 +518,7 @@ local function SetZIndexRecursive(gui, z)
         SetZIndexRecursive(child, z + 1)
     end
 end
-SetZIndexRecursive(GUI, 2)
+SetZIndexRecursive(GUI, 50)
 
 -- Anti-Detection Loop
 spawn(function()
