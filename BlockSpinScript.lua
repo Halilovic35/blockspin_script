@@ -32,7 +32,7 @@ local Config = {
     InfiniteMoney = false,
     AntiDetection = true,
     GUIEnabled = true,
-    Hotkey = Enum.KeyCode.RightControl,
+    Hotkey = Enum.KeyCode.RightShift,
     GUITheme = {
         Primary = Color3.fromRGB(45, 45, 45),
         Secondary = Color3.fromRGB(35, 35, 35),
@@ -284,7 +284,7 @@ local function CreateModernGUI()
     HotkeyLabel.Size = UDim2.new(1, -20, 0, 25)
     HotkeyLabel.Position = UDim2.new(0, 10, 0, 40)
     HotkeyLabel.BackgroundTransparency = 1
-    HotkeyLabel.Text = "Prekidač GUI: Desni Control"
+    HotkeyLabel.Text = "Prekidač GUI: Desni Shift"
     HotkeyLabel.TextColor3 = Config.GUITheme.Text
     HotkeyLabel.TextScaled = true
     HotkeyLabel.Font = Enum.Font.Gotham
@@ -491,6 +491,17 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
     end
 end)
 
+-- Fix ZIndex for all buttons and frames to ensure they are clickable
+local function SetZIndexRecursive(gui, z)
+    if gui:IsA("GuiObject") then
+        gui.ZIndex = z
+    end
+    for _, child in ipairs(gui:GetChildren()) do
+        SetZIndexRecursive(child, z + 1)
+    end
+end
+SetZIndexRecursive(GUI, 2)
+
 -- Anti-Detection Loop
 spawn(function()
     while Config.AntiDetection do
@@ -530,5 +541,5 @@ game:BindToClose(function()
 end)
 
 print("Missaky Panel Script loaded successfully!")
-print("Press Right Control to toggle GUI")
+print("Press Right Shift to toggle GUI")
 print("Features: Božija Besmrtnost, Beskonačno Trčanje, Neograničeno Bogatstvo, Anti-Detection") 
