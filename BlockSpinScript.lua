@@ -105,7 +105,7 @@ local function CreateModernGUI()
     TitleLabel.Size = UDim2.new(1, -20, 1, 0)
     TitleLabel.Position = UDim2.new(0, 10, 0, 0)
     TitleLabel.BackgroundTransparency = 1
-    TitleLabel.Text = "Block Spin Panel"
+    TitleLabel.Text = "Missaky Panel"
     TitleLabel.TextColor3 = Config.GUITheme.Text
     TitleLabel.TextScaled = true
     TitleLabel.Font = Enum.Font.GothamBold
@@ -158,7 +158,7 @@ local function CreateModernGUI()
     CombatTitle.Size = UDim2.new(1, -20, 0, 30)
     CombatTitle.Position = UDim2.new(0, 10, 0, 5)
     CombatTitle.BackgroundTransparency = 1
-    CombatTitle.Text = "Combat"
+    CombatTitle.Text = "Zaštita"
     CombatTitle.TextColor3 = Config.GUITheme.Text
     CombatTitle.TextScaled = true
     CombatTitle.Font = Enum.Font.GothamBold
@@ -169,7 +169,7 @@ local function CreateModernGUI()
     GodmodeToggle.Size = UDim2.new(1, -20, 0, 35)
     GodmodeToggle.Position = UDim2.new(0, 10, 0, 40)
     GodmodeToggle.BackgroundColor3 = Config.GUITheme.Primary
-    GodmodeToggle.Text = "Godmode: OFF"
+    GodmodeToggle.Text = "Božija Besmrtnost: ISKLJUČENO"
     GodmodeToggle.TextColor3 = Config.GUITheme.Text
     GodmodeToggle.TextScaled = true
     GodmodeToggle.Font = Enum.Font.Gotham
@@ -196,7 +196,7 @@ local function CreateModernGUI()
     MovementTitle.Size = UDim2.new(1, -20, 0, 30)
     MovementTitle.Position = UDim2.new(0, 10, 0, 5)
     MovementTitle.BackgroundTransparency = 1
-    MovementTitle.Text = "Movement"
+    MovementTitle.Text = "Kretanje"
     MovementTitle.TextColor3 = Config.GUITheme.Text
     MovementTitle.TextScaled = true
     MovementTitle.Font = Enum.Font.GothamBold
@@ -207,7 +207,7 @@ local function CreateModernGUI()
     StaminaToggle.Size = UDim2.new(1, -20, 0, 35)
     StaminaToggle.Position = UDim2.new(0, 10, 0, 40)
     StaminaToggle.BackgroundColor3 = Config.GUITheme.Primary
-    StaminaToggle.Text = "Infinite Stamina: OFF"
+    StaminaToggle.Text = "Beskonačno Trčanje: ISKLJUČENO"
     StaminaToggle.TextColor3 = Config.GUITheme.Text
     StaminaToggle.TextScaled = true
     StaminaToggle.Font = Enum.Font.Gotham
@@ -234,7 +234,7 @@ local function CreateModernGUI()
     EconomyTitle.Size = UDim2.new(1, -20, 0, 30)
     EconomyTitle.Position = UDim2.new(0, 10, 0, 5)
     EconomyTitle.BackgroundTransparency = 1
-    EconomyTitle.Text = "Economy"
+    EconomyTitle.Text = "Ekonomija"
     EconomyTitle.TextColor3 = Config.GUITheme.Text
     EconomyTitle.TextScaled = true
     EconomyTitle.Font = Enum.Font.GothamBold
@@ -245,7 +245,7 @@ local function CreateModernGUI()
     MoneyToggle.Size = UDim2.new(1, -20, 0, 35)
     MoneyToggle.Position = UDim2.new(0, 10, 0, 40)
     MoneyToggle.BackgroundColor3 = Config.GUITheme.Primary
-    MoneyToggle.Text = "Infinite Money: OFF"
+    MoneyToggle.Text = "Neograničeno Bogatstvo: ISKLJUČENO"
     MoneyToggle.TextColor3 = Config.GUITheme.Text
     MoneyToggle.TextScaled = true
     MoneyToggle.Font = Enum.Font.Gotham
@@ -272,7 +272,7 @@ local function CreateModernGUI()
     SettingsTitle.Size = UDim2.new(1, -20, 0, 30)
     SettingsTitle.Position = UDim.new(0, 10, 0, 5)
     SettingsTitle.BackgroundTransparency = 1
-    SettingsTitle.Text = "Settings"
+    SettingsTitle.Text = "Podešavanja"
     SettingsTitle.TextColor3 = Config.GUITheme.Text
     SettingsTitle.TextScaled = true
     SettingsTitle.Font = Enum.Font.GothamBold
@@ -284,7 +284,7 @@ local function CreateModernGUI()
     HotkeyLabel.Size = UDim2.new(1, -20, 0, 25)
     HotkeyLabel.Position = UDim2.new(0, 10, 0, 40)
     HotkeyLabel.BackgroundTransparency = 1
-    HotkeyLabel.Text = "Toggle GUI: Right Control"
+    HotkeyLabel.Text = "Prekidač GUI: Desni Control"
     HotkeyLabel.TextColor3 = Config.GUITheme.Text
     HotkeyLabel.TextScaled = true
     HotkeyLabel.Font = Enum.Font.Gotham
@@ -296,7 +296,7 @@ local function CreateModernGUI()
     SaveButton.Size = UDim2.new(0.48, 0, 0, 35)
     SaveButton.Position = UDim2.new(0, 10, 0, 70)
     SaveButton.BackgroundColor3 = Config.GUITheme.Success
-    SaveButton.Text = "Save Settings"
+    SaveButton.Text = "Sačuvaj"
     SaveButton.TextColor3 = Config.GUITheme.Text
     SaveButton.TextScaled = true
     SaveButton.Font = Enum.Font.Gotham
@@ -311,7 +311,7 @@ local function CreateModernGUI()
     LoadButton.Size = UDim2.new(0.48, 0, 0, 35)
     LoadButton.Position = UDim2.new(0.52, 0, 0, 70)
     LoadButton.BackgroundColor3 = Config.GUITheme.Warning
-    LoadButton.Text = "Load Settings"
+    LoadButton.Text = "Učitaj"
     LoadButton.TextColor3 = Config.GUITheme.Text
     LoadButton.TextScaled = true
     LoadButton.Font = Enum.Font.Gotham
@@ -327,7 +327,7 @@ local function CreateModernGUI()
     StatusLabel.Size = UDim2.new(1, -20, 0, 25)
     StatusLabel.Position = UDim2.new(0, 10, 0, 110)
     StatusLabel.BackgroundTransparency = 1
-    StatusLabel.Text = "Status: Ready"
+    StatusLabel.Text = "Status: Spreman"
     StatusLabel.TextColor3 = Config.GUITheme.Success
     StatusLabel.TextScaled = true
     StatusLabel.Font = Enum.Font.Gotham
@@ -395,7 +395,7 @@ MakeDraggable(Elements.MainFrame)
 local function ToggleGodmode()
     Config.Godmode = not Config.Godmode
     local color = Config.Godmode and Config.GUITheme.Success or Config.GUITheme.Primary
-    local text = Config.Godmode and "Godmode: ON" or "Godmode: OFF"
+    local text = Config.Godmode and "Božija Besmrtnost: UKLJUČENO" or "Božija Besmrtnost: ISKLJUČENO"
     
     Elements.GodmodeToggle.BackgroundColor3 = color
     Elements.GodmodeToggle.Text = text
@@ -416,7 +416,7 @@ end
 local function ToggleStamina()
     Config.InfiniteStamina = not Config.InfiniteStamina
     local color = Config.InfiniteStamina and Config.GUITheme.Success or Config.GUITheme.Primary
-    local text = Config.InfiniteStamina and "Infinite Stamina: ON" or "Infinite Stamina: OFF"
+    local text = Config.InfiniteStamina and "Beskonačno Trčanje: UKLJUČENO" or "Beskonačno Trčanje: ISKLJUČENO"
     
     Elements.StaminaToggle.BackgroundColor3 = color
     Elements.StaminaToggle.Text = text
@@ -442,7 +442,7 @@ end
 local function ToggleMoney()
     Config.InfiniteMoney = not Config.InfiniteMoney
     local color = Config.InfiniteMoney and Config.GUITheme.Success or Config.GUITheme.Primary
-    local text = Config.InfiniteMoney and "Infinite Money: ON" or "Infinite Money: OFF"
+    local text = Config.InfiniteMoney and "Neograničeno Bogatstvo: UKLJUČENO" or "Neograničeno Bogatstvo: ISKLJUČENO"
     
     Elements.MoneyToggle.BackgroundColor3 = color
     Elements.MoneyToggle.Text = text
@@ -470,18 +470,18 @@ end)
 
 Elements.SaveButton.MouseButton1Click:Connect(function()
     -- Save settings logic
-    Elements.StatusLabel.Text = "Status: Settings Saved"
+    Elements.StatusLabel.Text = "Status: Sačuvano"
     Elements.StatusLabel.TextColor3 = Config.GUITheme.Success
     wait(2)
-    Elements.StatusLabel.Text = "Status: Ready"
+    Elements.StatusLabel.Text = "Status: Spreman"
 end)
 
 Elements.LoadButton.MouseButton1Click:Connect(function()
     -- Load settings logic
-    Elements.StatusLabel.Text = "Status: Settings Loaded"
+    Elements.StatusLabel.Text = "Status: Učitano"
     Elements.StatusLabel.TextColor3 = Config.GUITheme.Success
     wait(2)
-    Elements.StatusLabel.Text = "Status: Ready"
+    Elements.StatusLabel.Text = "Status: Spreman"
 end)
 
 -- Hotkey Support
@@ -518,7 +518,7 @@ end)
 -- Auto-Update Check (Placeholder)
 spawn(function()
     wait(5)
-    Elements.StatusLabel.Text = "Status: Script Loaded Successfully"
+    Elements.StatusLabel.Text = "Status: Skripta Učitana"
     Elements.StatusLabel.TextColor3 = Config.GUITheme.Success
 end)
 
@@ -529,6 +529,6 @@ game:BindToClose(function()
     end
 end)
 
-print("Block Spin Script loaded successfully!")
+print("Missaky Panel Script loaded successfully!")
 print("Press Right Control to toggle GUI")
-print("Features: Godmode, Infinite Stamina, Infinite Money, Anti-Detection") 
+print("Features: Božija Besmrtnost, Beskonačno Trčanje, Neograničeno Bogatstvo, Anti-Detection") 
