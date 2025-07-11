@@ -392,22 +392,41 @@ end
 MakeDraggable(Elements.MainFrame)
 
 -- Toggle Functions
+local godmodeThread = nil
+local staminaThread = nil
+local moneyThread = nil
+
 local function ToggleGodmode()
     Config.Godmode = not Config.Godmode
     local color = Config.Godmode and Config.GUITheme.Success or Config.GUITheme.Primary
     local text = Config.Godmode and "Božija Besmrtnost: UKLJUČENO" or "Božija Besmrtnost: ISKLJUČENO"
-    
     Elements.GodmodeToggle.BackgroundColor3 = color
     Elements.GodmodeToggle.Text = text
-    
     if Config.Godmode then
-        -- Implement godmode logic here
+        if godmodeThread then godmodeThread:Disconnect() end
+        godmodeThread = RunService.Heartbeat:Connect(function()
+            local character = LocalPlayer.Character
+            if character then
+                local humanoid = character:FindFirstChild("Humanoid")
+                if humanoid then
+                    humanoid.MaxHealth = 100
+                    if humanoid.Health < 100 then
+                        humanoid.Health = 100
+                    end
+                end
+            end
+        end)
+    else
+        if godmodeThread then godmodeThread:Disconnect() end
+        godmodeThread = nil
         local character = LocalPlayer.Character
         if character then
             local humanoid = character:FindFirstChild("Humanoid")
             if humanoid then
-                humanoid.Health = math.huge
-                humanoid.MaxHealth = math.huge
+                humanoid.MaxHealth = 100
+                if humanoid.Health > 100 then
+                    humanoid.Health = 100
+                end
             end
         end
     end
@@ -417,25 +436,38 @@ local function ToggleStamina()
     Config.InfiniteStamina = not Config.InfiniteStamina
     local color = Config.InfiniteStamina and Config.GUITheme.Success or Config.GUITheme.Primary
     local text = Config.InfiniteStamina and "Beskonačno Trčanje: UKLJUČENO" or "Beskonačno Trčanje: ISKLJUČENO"
-    
     Elements.StaminaToggle.BackgroundColor3 = color
     Elements.StaminaToggle.Text = text
-    
     if Config.InfiniteStamina then
-        -- Implement infinite stamina logic here
-        spawn(function()
-            while Config.InfiniteStamina do
-                local character = LocalPlayer.Character
-                if character then
-                    local humanoid = character:FindFirstChild("Humanoid")
-                    if humanoid then
-                        humanoid.WalkSpeed = 50
-                        humanoid.JumpPower = 100
+        if staminaThread then staminaThread:Disconnect() end
+        staminaThread = RunService.Heartbeat:Connect(function()
+            local character = LocalPlayer.Character
+            if character then
+                -- Najčešći nazivi stamina varijabli
+                local stamina = character:FindFirstChild("Stamina") or character:FindFirstChild("stamina") or character:FindFirstChild("Energy") or character:FindFirstChild("energy") or character:FindFirstChild("Sprint") or character:FindFirstChild("sprint")
+                if stamina and stamina:IsA("NumberValue") then
+                    if stamina.Value < 115 then
+                        stamina.Value = 115
                     end
                 end
-                wait(0.1)
+                local humanoid = character:FindFirstChild("Humanoid")
+                if humanoid then
+                    humanoid.WalkSpeed = 50
+                    humanoid.JumpPower = 100
+                end
             end
         end)
+    else
+        if staminaThread then staminaThread:Disconnect() end
+        staminaThread = nil
+        local character = LocalPlayer.Character
+        if character then
+            local humanoid = character:FindFirstChild("Humanoid")
+            if humanoid then
+                humanoid.WalkSpeed = 16
+                humanoid.JumpPower = 50
+            end
+        end
     end
 end
 
@@ -443,18 +475,16 @@ local function ToggleMoney()
     Config.InfiniteMoney = not Config.InfiniteMoney
     local color = Config.InfiniteMoney and Config.GUITheme.Success or Config.GUITheme.Primary
     local text = Config.InfiniteMoney and "Neograničeno Bogatstvo: UKLJUČENO" or "Neograničeno Bogatstvo: ISKLJUČENO"
-    
     Elements.MoneyToggle.BackgroundColor3 = color
     Elements.MoneyToggle.Text = text
-    
     if Config.InfiniteMoney then
-        -- Implement infinite money logic here
-        spawn(function()
-            while Config.InfiniteMoney do
-                -- Add money logic based on game
-                wait(1)
-            end
+        if moneyThread then moneyThread:Disconnect() end
+        moneyThread = RunService.Heartbeat:Connect(function()
+            -- Add money logic based on game
         end)
+    else
+        if moneyThread then moneyThread:Disconnect() end
+        moneyThread = nil
     end
 end
 
