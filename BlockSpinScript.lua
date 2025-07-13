@@ -124,6 +124,133 @@ local combat = tabFrames[1]
 local y = 0
 local function nextY() y = y + 40; return y-40 end
 
+-- AIMBOT
+local aimbotToggle = Instance.new("TextButton", combat)
+aimbotToggle.Size = UDim2.new(0, 200, 0, 32)
+aimbotToggle.Position = UDim2.new(0, 0, 0, nextY())
+aimbotToggle.BackgroundColor3 = theme.inactive
+aimbotToggle.Text = "Aimbot [OFF]"
+aimbotToggle.TextColor3 = theme.text
+aimbotToggle.Font = Enum.Font.Gotham
+aimbotToggle.TextSize = 18
+
+local aimbotOn = false
+local aimbotBind = Enum.KeyCode.R -- default bind na R
+local aimbotTargetPart = "Head" -- ili "HumanoidRootPart"
+
+-- Dropdown za biranje cilja (glava/tijelo)
+local partDropdown = Instance.new("TextButton", combat)
+partDropdown.Size = UDim2.new(0, 200, 0, 32)
+partDropdown.Position = UDim2.new(0, 0, 0, nextY())
+partDropdown.BackgroundColor3 = theme.tab
+partDropdown.Text = "Cilj: Glava"
+partDropdown.TextColor3 = theme.text
+partDropdown.Font = Enum.Font.Gotham
+partDropdown.TextSize = 16
+partDropdown.AutoButtonColor = false
+partDropdown.MouseButton1Click:Connect(function()
+    if aimbotTargetPart == "Head" then
+        aimbotTargetPart = "HumanoidRootPart"
+        partDropdown.Text = "Cilj: Tijelo"
+    else
+        aimbotTargetPart = "Head"
+        partDropdown.Text = "Cilj: Glava"
+    end
+end)
+
+-- Bind info i promjena binda
+local bindLabel = Instance.new("TextButton", combat)
+bindLabel.Size = UDim2.new(0, 200, 0, 24)
+bindLabel.Position = UDim2.new(0, 0, 0, nextY())
+bindLabel.BackgroundTransparency = 1
+bindLabel.Text = "Bind: R (klikni za promjenu)"
+bindLabel.TextColor3 = theme.text
+bindLabel.Font = Enum.Font.Gotham
+bindLabel.TextSize = 14
+bindLabel.AutoButtonColor = true
+local waitingForBind = false
+bindLabel.MouseButton1Click:Connect(function()
+    bindLabel.Text = "Pritisni tipku..."
+    waitingForBind = true
+end)
+UserInputService.InputBegan:Connect(function(input, processed)
+    if waitingForBind and input.UserInputType == Enum.UserInputType.Keyboard then
+        aimbotBind = input.KeyCode
+        bindLabel.Text = "Bind: "..tostring(aimbotBind.Name)
+        waitingForBind = false
+    end
+end)
+
+-- Auto-Attack toggle
+local autoAttackToggle = Instance.new("TextButton", combat)
+autoAttackToggle.Size = UDim2.new(0, 200, 0, 32)
+autoAttackToggle.Position = UDim2.new(0, 0, 0, nextY())
+autoAttackToggle.BackgroundColor3 = theme.inactive
+autoAttackToggle.Text = "Auto-Attack [OFF]"
+autoAttackToggle.TextColor3 = theme.text
+autoAttackToggle.Font = Enum.Font.Gotham
+autoAttackToggle.TextSize = 18
+local autoAttackOn = false
+autoAttackToggle.MouseButton1Click:Connect(function()
+    autoAttackOn = not autoAttackOn
+    autoAttackToggle.BackgroundColor3 = autoAttackOn and theme.accent or theme.inactive
+    autoAttackToggle.Text = autoAttackOn and "Auto-Attack [ON]" or "Auto-Attack [OFF]"
+end)
+
+-- Aimbot logika
+local aiming = false
+local lockedTarget = nil
+UserInputService.InputBegan:Connect(function(input, processed)
+    if not waitingForBind and input.KeyCode == aimbotBind and not processed then
+        aimbotOn = not aimbotOn
+        aimbotToggle.BackgroundColor3 = aimbotOn and theme.accent or theme.inactive
+        aimbotToggle.Text = aimbotOn and "Aimbot [ON]" or "Aimbot [OFF]"
+        if not aimbotOn then lockedTarget = nil end
+    end
+end)
+
+local function getClosestTarget()
+    local closest, dist = nil, math.huge
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild(aimbotTargetPart) then
+            local part = player.Character[aimbotTargetPart]
+            local d = (part.Position - workspace.CurrentCamera.CFrame.Position).Magnitude
+            if d < dist then
+                dist = d
+                closest = part
+            end
+        end
+    end
+    return closest
+end
+
+RunService.RenderStepped:Connect(function()
+    if aimbotOn then
+        if not lockedTarget or not lockedTarget.Parent or not lockedTarget:IsDescendantOf(workspace) then
+            lockedTarget = getClosestTarget()
+        end
+        if lockedTarget then
+            workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, lockedTarget.Position)
+        end
+    else
+        lockedTarget = nil
+    end
+end)
+
+-- Auto-Attack logika
+spawn(function()
+    while true do
+        if aimbotOn and autoAttackOn and lockedTarget then
+            mouse1press()
+            wait()
+            mouse1release()
+        else
+            wait(0.05)
+        end
+    end
+end)
+
+-- Hitbox
 local hitboxToggle = Instance.new("TextButton", combat)
 hitboxToggle.Size = UDim2.new(0, 200, 0, 32)
 hitboxToggle.Position = UDim2.new(0, 0, 0, nextY())
@@ -222,22 +349,6 @@ hitboxToggle.MouseButton1Click:Connect(function()
     updateHitboxes()
 end)
 
--- DMGER (100 DMG svaki udarac)
-local dmgerToggle = Instance.new("TextButton", combat)
-dmgerToggle.Size = UDim2.new(0, 200, 0, 32)
-dmgerToggle.Position = UDim2.new(0, 0, 0, nextY())
-dmgerToggle.BackgroundColor3 = theme.inactive
-dmgerToggle.Text = "100 DMG [OFF]"
-dmgerToggle.TextColor3 = theme.text
-dmgerToggle.Font = Enum.Font.Gotham
-dmgerToggle.TextSize = 18
-local dmgerOn = false
-dmgerToggle.MouseButton1Click:Connect(function()
-    dmgerOn = not dmgerOn
-    dmgerToggle.BackgroundColor3 = dmgerOn and theme.accent or theme.inactive
-    dmgerToggle.Text = dmgerOn and "100 DMG [ON]" or "100 DMG [OFF]"
-end)
-
 -- ESP TAB
 local esp = tabFrames[2]
 local y2 = 0
@@ -252,34 +363,44 @@ espToggle.Font = Enum.Font.Gotham
 espToggle.TextSize = 18
 local espOn = false
 local nametags = {}
-local function updateNametags()
-    for _,v in pairs(nametags) do if v and v.Parent then v:Destroy() end end
-    table.clear(nametags)
-    if not espOn then return end
-    for _,plr in ipairs(Players:GetPlayers()) do
-        if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("Head") then
-            local tag = Instance.new("BillboardGui")
-            tag.Size = UDim2.new(0, 100, 0, 30)
-            tag.Adornee = plr.Character.Head
-            tag.AlwaysOnTop = true
-            tag.Parent = plr.Character.Head
-            local txt = Instance.new("TextLabel", tag)
-            txt.Size = UDim2.new(1,0,1,0)
-            txt.BackgroundTransparency = 1
-            txt.TextColor3 = theme.accent
-            txt.Text = plr.Name .. " ["..math.floor((plr.Character.Head.Position-LocalPlayer.Character.Head.Position).Magnitude).."m]"
-            txt.Font = Enum.Font.GothamBold
-            txt.TextScaled = true
-            table.insert(nametags, tag)
-        end
+
+local function createNametag(plr)
+    if not plr.Character or not plr.Character:FindFirstChild("Head") then return end
+    if nametags[plr] and nametags[plr].Parent then return end
+    local tag = Instance.new("BillboardGui")
+    tag.Name = "MissakyNametag"
+    tag.Size = UDim2.new(0, 100, 0, 30)
+    tag.Adornee = plr.Character.Head
+    tag.AlwaysOnTop = true
+    tag.Parent = plr.Character.Head
+    local txt = Instance.new("TextLabel", tag)
+    txt.Name = "MissakyNameText"
+    txt.Size = UDim2.new(1,0,1,0)
+    txt.BackgroundTransparency = 1
+    txt.TextColor3 = theme.accent
+    txt.Text = plr.Name
+    txt.Font = Enum.Font.GothamBold
+    txt.TextScaled = true
+    nametags[plr] = tag
+end
+
+local function removeNametag(plr)
+    if nametags[plr] then
+        nametags[plr]:Destroy()
+        nametags[plr] = nil
     end
 end
+
 espToggle.MouseButton1Click:Connect(function()
     espOn = not espOn
     espToggle.BackgroundColor3 = espOn and theme.accent or theme.inactive
     espToggle.Text = espOn and "Nametags [ON]" or "Nametags [OFF]"
-    updateNametags()
+    if not espOn then
+        for _,tag in pairs(nametags) do if tag and tag.Parent then tag:Destroy() end end
+        nametags = {}
+    end
 end)
+
 -- ESP Box
 local espBoxToggle = Instance.new("TextButton", esp)
 espBoxToggle.Size = UDim2.new(0, 200, 0, 32)
@@ -314,33 +435,6 @@ end)
 local utility = tabFrames[3]
 local y3 = 0
 local function nextY3() y3 = y3 + 40; return y3-40 end
-local godmodeToggle = Instance.new("TextButton", utility)
-godmodeToggle.Size = UDim2.new(0, 200, 0, 32)
-godmodeToggle.Position = UDim2.new(0, 0, 0, nextY3())
-godmodeToggle.BackgroundColor3 = theme.inactive
-godmodeToggle.Text = "Godmode [OFF]"
-godmodeToggle.TextColor3 = theme.text
-godmodeToggle.Font = Enum.Font.Gotham
-godmodeToggle.TextSize = 18
-local staminaToggle = Instance.new("TextButton", utility)
-staminaToggle.Size = UDim2.new(0, 200, 0, 32)
-staminaToggle.Position = UDim2.new(0, 0, 0, nextY3())
-staminaToggle.BackgroundColor3 = theme.inactive
-staminaToggle.Text = "Infinite Stamina [OFF]"
-staminaToggle.TextColor3 = theme.text
-staminaToggle.Font = Enum.Font.Gotham
-staminaToggle.TextSize = 18
-local godmodeOn, staminaOn = false, false
-godmodeToggle.MouseButton1Click:Connect(function()
-    godmodeOn = not godmodeOn
-    godmodeToggle.BackgroundColor3 = godmodeOn and theme.accent or theme.inactive
-    godmodeToggle.Text = godmodeOn and "Godmode [ON]" or "Godmode [OFF]"
-end)
-staminaToggle.MouseButton1Click:Connect(function()
-    staminaOn = not staminaOn
-    staminaToggle.BackgroundColor3 = staminaOn and theme.accent or theme.inactive
-    staminaToggle.Text = staminaOn and "Infinite Stamina [ON]" or "Infinite Stamina [OFF]"
-end)
 -- Glavni loop za funkcije
 local espBoxes, espTracers = {}, {}
 RunService.RenderStepped:Connect(function()
@@ -353,10 +447,28 @@ RunService.RenderStepped:Connect(function()
     end
     -- ESP
     if espOn then
-        updateNametags()
+        for _,plr in ipairs(Players:GetPlayers()) do
+            if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("Head") then
+                createNametag(plr)
+                -- Update distance in text
+                local tag = nametags[plr]
+                if tag and tag:FindFirstChild("MissakyNameText") then
+                    local dist = math.floor((plr.Character.Head.Position-LocalPlayer.Character.Head.Position).Magnitude)
+                    tag.MissakyNameText.Text = plr.Name .. " ["..dist.."m]"
+                end
+            else
+                removeNametag(plr)
+            end
+        end
+        -- Clean up nametags for players who left
+        for plr,tag in pairs(nametags) do
+            if not plr.Parent or not plr.Character or not plr.Character:FindFirstChild("Head") then
+                removeNametag(plr)
+            end
+        end
     else
-        for _,v in pairs(nametags) do if v and v.Parent then v:Destroy() end end
-        table.clear(nametags)
+        for _,tag in pairs(nametags) do if tag and tag.Parent then tag:Destroy() end end
+        nametags = {}
     end
     -- ESP Box
     for _,v in pairs(espBoxes) do if v and v.Parent then v:Destroy() end end
@@ -377,15 +489,15 @@ RunService.RenderStepped:Connect(function()
         end
     end
     -- ESP Tracer
-    for _,v in pairs(espTracers) do if v and v.Parent then v:Destroy() end end
+    for _,v in pairs(espTracers) do if v and v.Remove then v:Remove() elseif v and v.Parent then v:Destroy() end end
     table.clear(espTracers)
     if espTracerOn and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Head") then
         local from = workspace.CurrentCamera:WorldToViewportPoint(LocalPlayer.Character.Head.Position)
         for _,plr in ipairs(Players:GetPlayers()) do
             if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("Head") then
                 local to = workspace.CurrentCamera:WorldToViewportPoint(plr.Character.Head.Position)
-                local line = Drawing and Drawing.new("Line") or Instance.new("Frame", gui)
-                if Drawing and line then
+                if Drawing then
+                    local line = Drawing.new("Line")
                     line.From = Vector2.new(from.X, from.Y)
                     line.To = Vector2.new(to.X, to.Y)
                     line.Color = theme.accent
@@ -394,51 +506,53 @@ RunService.RenderStepped:Connect(function()
                     line.Visible = true
                     table.insert(espTracers, line)
                 else
-                    -- fallback: simple frame
-                    line.Size = UDim2.new(0,2,0,(to.Y-from.Y))
-                    line.Position = UDim2.new(0,from.X,0,from.Y)
-                    line.BackgroundColor3 = theme.accent
-                    line.BorderSizePixel = 0
-                    table.insert(espTracers, line)
+                    -- fallback: simple frame (draws vertical line only)
+                    local frame = Instance.new("Frame", gui)
+                    frame.Size = UDim2.new(0,2,0,(to.Y-from.Y))
+                    frame.Position = UDim2.new(0,from.X,0,from.Y)
+                    frame.BackgroundColor3 = theme.accent
+                    frame.BorderSizePixel = 0
+                    frame.Visible = true
+                    table.insert(espTracers, frame)
                 end
             end
         end
     end
     -- Godmode
-    if godmodeOn and LocalPlayer.Character then
-        local h = getHealthVar(LocalPlayer.Character)
-        if h then
-            if h:IsA("Humanoid") then
-                h.Health = h.MaxHealth
-            elseif h:IsA("NumberValue") then
-                h.Value = 100
-            end
-        end
-    end
+    -- if godmodeOn and LocalPlayer.Character then
+    --     local h = getHealthVar(LocalPlayer.Character)
+    --     if h then
+    --         if h:IsA("Humanoid") then
+    --             h.Health = h.MaxHealth
+    --         elseif h:IsA("NumberValue") then
+    --             h.Value = 100
+    --         end
+    --     end
+    -- end
     -- Infinite stamina
-    if staminaOn and LocalPlayer.Character then
-        local s = getStaminaVar(LocalPlayer.Character)
-        if s and s.Value < 115 then s.Value = 115 end
-    end
+    -- if staminaOn and LocalPlayer.Character then
+    --     local s = getStaminaVar(LocalPlayer.Character)
+    --     if s and s.Value < 115 then s.Value = 115 end
+    -- end
     -- DMGER (brute force: smanjuje health protivnicima u hitboxu)
-    if dmgerOn and hitboxOn then
-        for _,plr in ipairs(Players:GetPlayers()) do
-            if plr ~= LocalPlayer and plr.Character then
-                local h = getHealthVar(plr.Character)
-                if h then
-                    for _,box in ipairs(hitboxes) do
-                        if plr.Character:FindFirstChild("HumanoidRootPart") and (plr.Character.HumanoidRootPart.Position - box.Position).Magnitude < (hitboxSize/2) then
-                            if h:IsA("Humanoid") then
-                                h.Health = math.max(0, h.Health - 100)
-                            elseif h:IsA("NumberValue") then
-                                h.Value = math.max(0, h.Value - 100)
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    end
+    -- if dmgerOn and hitboxOn then
+    --     for _,plr in ipairs(Players:GetPlayers()) do
+    --         if plr ~= LocalPlayer and plr.Character then
+    --             local h = getHealthVar(plr.Character)
+    --             if h then
+    --                 for _,box in ipairs(hitboxes) do
+    --                     if plr.Character:FindFirstChild("HumanoidRootPart") and (plr.Character.HumanoidRootPart.Position - box.Position).Magnitude < (hitboxSize/2) then
+    --                         if h:IsA("Humanoid") then
+    --                             h.Health = math.max(0, h.Health - 100)
+    --                         elseif h:IsA("NumberValue") then
+    --                             h.Value = math.max(0, h.Value - 100)
+    --                         end
+    --                     end
+    --                 end
+    --             end
+    --         end
+    --     end
+    -- end
     -- Infinite money (ako želiš, možeš dodati toggle i koristiti getMoneyVar())
     -- local m = getMoneyVar()
     -- if m and m.Value < 999999 then m.Value = 999999 end
